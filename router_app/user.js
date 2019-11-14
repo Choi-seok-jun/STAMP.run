@@ -1,0 +1,84 @@
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const router = express.Router();
+const { User, validateUser } = require("../model_app/user");
+const { Personal, validatePersonal } = require("../model_app/user");
+const { jwtSecret } = require("../common_app/jwt_config");
+const wrapper = require("../common_app/wrapper");
+// 객체로 보내주는것은 객체로 받아야함 객체를 req.body에 담았어도 따로따로 받으려면 객체로 받아서 객체 담겨진것을 불러와야함.
+router.post(
+  "/join",
+  wrapper(async (req, res, next) => {
+    const { name, email, password, id, phone_num } = req.body;
+    if (validateUser({ name, email, phone_num }).error) {
+      //검증과정 통과 못하면
+      res.status(400).json({ result: false });
+      next();
+      return;
+    }
+    if (validatePersonal({ password, id }).error) {
+      //검증과정 통과 못하면
+      res.status(400).json({ result: false });
+      next();
+      return;
+    }
+    const saltRound = 10;
+    const hashedPW = await bcrypt.hash(password, saltRound);
+    const user = new User({ name, email, phone_num });
+    const personal = new Personal({ password: hashedPW, id });
+    const saveResult = await user.save();
+    const saveResult2 = await personal.save();
+    res.json({ result: true });
+    next();
+  })
+);
+
+router.post(
+  "/login",
+  wrapper(async (req, res, next) => {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      res.json({ result: false });
+      next();
+      return;
+    }
+    const result = await bcrypt.compare(password, user.password);
+    //처음껀 입력한 비밀번호 , 2번째껀 DB에 들어있는 해쉬된 비밀번호 맞는것을 bcrypt가 비교해줌
+    if (result) {
+      //비밀번호가 맞는경우 토큰을 만들어줌!
+      const token = jwt.sign(
+        {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          admin: user.admin
+        },
+        jwtSecret,
+        { expiresIn: "1h" }
+      );
+      res.json({ result: true, token, admin: user.admin });
+      next();
+    } else {
+      res.json({ result: false });
+      next();
+    }
+  })
+);
+
+router.get(
+  "/email",
+  wrapper(async (req, res, next) => {
+    const email = req.query.email;
+    const user = await User.findOne({ email });
+    if (user) {
+      res.json({ result: false });
+    } else {
+      res.json({ result: true });
+    }
+    next();
+  })
+);
+
+module.exports = router;

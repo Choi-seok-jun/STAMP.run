@@ -2,14 +2,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Helmet = require("helmet");
 const app = express();
-const post = require("./routers/post");
-const user = require("./routers/user");
-const tag = require("./routers/tag");
-const comment = require("./routers/comment");
-const config = require("./common/jwt_config");
-const auth = require("./common/auth")();
+const main = require("./router_app/main");
+const user = require("./router_app/user");
+const modify = require("./router_app/modify");
+const missions = require("./router_app/missions");
+const config = require("./common_app/jwt_config");
+const auth = require("./common_app/auth")();
 
-const dbURI = process.env.MONGODB_URI || " mongodb://localhost/blog-dev";
+const dbURI = process.env.MONGODB_URI || " mongodb://localhost/stamp-run";
 
 app.use(Helmet());
 app.use((req, res, next) => {
@@ -26,9 +26,9 @@ app.use((req, res, next) => {
 app.use(auth.initiallze());
 app.use(express.json());
 app.use("/auth", user);
-app.use("/api/post", post);
-app.use("/api/tag", tag);
-app.use("/api/comment", comment);
+app.use("/api/main", main);
+app.use("/api/missions", missions);
+app.use("/api/modify", modify);
 app.use(() => mongoose.disconnect());
 
 const PORT = process.env.PORT || 3000;
