@@ -50,14 +50,15 @@ router.post(
 router.post(
   "/login",
   wrapper(async (req, res, next) => {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email: email });
-    if (!user) {
+    const { id, password } = req.body;
+    const perosnal = await Personal.findOne({ id: id });
+    //뒤의 이메일은 사용자가 입력한것 앞의 것은 데이터베이스에 들어있는 값
+    if (!perosnal) {
       res.json({ result: false });
       next();
       return;
     }
-    const result = await bcrypt.compare(password, user.password);
+    const result = await bcrypt.compare(password, personal.password);
     //처음껀 입력한 비밀번호 , 2번째껀 DB에 들어있는 해쉬된 비밀번호 맞는것을 bcrypt가 비교해줌
     if (result) {
       //비밀번호가 맞는경우 토큰을 만들어줌!
@@ -66,10 +67,11 @@ router.post(
           id: user._id,
           name: user.name,
           email: user.email,
+          phone_num: user.phone_num,
           admin: user.admin
         },
         jwtSecret,
-        { expiresIn: "1h" }
+        { expiresIn: "5m" }
       );
       res.json({ result: true, token, admin: user.admin });
       next();
