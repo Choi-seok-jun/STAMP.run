@@ -26,9 +26,22 @@ router.post(
     const saltRound = 10;
     const hashedPW = await bcrypt.hash(password, saltRound);
     const user = new User({ name, email, phone_num });
-    const personal = new Personal({ password: hashedPW, id });
     const saveResult = await user.save();
+    const personal = new Personal({
+      password: hashedPW,
+      id,
+      userAdd: user._id
+    });
     const saveResult2 = await personal.save();
+
+    await User.updateOne(
+      { _id: personal.userAdd },
+      { $set: { persAdd: personal._id } }
+      //User를 만들고 난뒤에 업데이트를 하는데  personal 이 만들어질떄 user에있는_id가  userAdd 로 들어가는데
+      //그이후에 personal 에 있는 userAdd와 User 에 있는 원본이랑 비교해서 같으면
+      //personal이 만들어질때 생긴 _id가 userAdd로 들어간다.
+      // await Personal.updateOne(user._id).toString();
+    );
     res.json({ result: true });
     next();
   })
