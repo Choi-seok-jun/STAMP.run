@@ -2,6 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const router = express.Router();
+const nodemailer = require("nodemailer");
 const { User, validateUser } = require("../model_app/user");
 const { Personal, validatePersonal } = require("../model_app/user");
 const { jwtSecret } = require("../common_app/jwt_config");
@@ -51,9 +52,9 @@ router.post(
   "/login",
   wrapper(async (req, res, next) => {
     const { id, password } = req.body;
-    const perosnal = await Personal.findOne({ id: id });
+    const personal = await Personal.findOne({ id: id });
     //뒤의 이메일은 사용자가 입력한것 앞의 것은 데이터베이스에 들어있는 값
-    if (!perosnal) {
+    if (!personal) {
       res.json({ result: false });
       next();
       return;
@@ -64,16 +65,16 @@ router.post(
       //비밀번호가 맞는경우 토큰을 만들어줌!
       const token = jwt.sign(
         {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          phone_num: user.phone_num,
-          admin: user.admin
+          id: personal._id,
+          name: personal.name,
+          email: personal.email,
+          phone_num: personal.phone_num,
+          admin: personal.admin
         },
         jwtSecret,
         { expiresIn: "5m" }
       );
-      res.json({ result: true, token, admin: user.admin });
+      res.json({ result: true, token, admin: personal.admin });
       next();
     } else {
       res.json({ result: false });
@@ -81,13 +82,12 @@ router.post(
     }
   })
 );
-
 router.get(
-  "/email",
+  "/id",
   wrapper(async (req, res, next) => {
-    const email = req.query.email;
-    const user = await User.findOne({ email });
-    if (user) {
+    const id = req.query.id;
+    const personal = await Personal.findOne({ id });
+    if (personal) {
       res.json({ result: false });
     } else {
       res.json({ result: true });
