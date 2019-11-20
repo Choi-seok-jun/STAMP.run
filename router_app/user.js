@@ -6,7 +6,6 @@ const { User, validateUser } = require("../model_app/user");
 const { Personal, validatePersonal } = require("../model_app/user");
 const { jwtSecret } = require("../common_app/jwt_config");
 const wrapper = require("../common_app/wrapper");
-const eamilAuth = require("./emailAuth");
 
 // 객체로 보내주는것은 객체로 받아야함 객체를 req.body에 담았어도 따로따로 받으려면 객체로 받아서 객체 담겨진것을 불러와야함.
 router.post(
@@ -91,9 +90,36 @@ router.post(
 router.get(
   "/id",
   wrapper(async (req, res, next) => {
-    const id = req.body.id;
+    const id = req.query.id;
+    console.log(id);
     const personal = await Personal.findOne({ id });
     if (personal) {
+      res.json({ result: false });
+    } else {
+      res.json({ result: true });
+    }
+    next();
+  })
+);
+router.get(
+  "/:phone_num",
+  wrapper(async (req, res, next) => {
+    const phone_num = req.params.phone_num;
+    const user = await User.findOne({ phone_num });
+    if (user) {
+      res.json({ result: false });
+    } else {
+      res.json({ result: true });
+    }
+    next();
+  })
+);
+router.get(
+  "/:email",
+  wrapper(async (req, res, next) => {
+    const email = req.params.email;
+    const user = await User.findOne({ email });
+    if (user) {
       res.json({ result: false });
     } else {
       res.json({ result: true });

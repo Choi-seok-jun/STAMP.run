@@ -4,7 +4,7 @@ const router = express.Router();
 const smtpPool = require("nodemailer-smtp-pool");
 const { User } = require("../model_app/user");
 const wrapper = require("../common_app/wrapper");
-
+const password = process.env.EMAIL_PW || require("../mailConfig");
 router.post(
   "/",
   wrapper(async (req, res, next) => {
@@ -14,7 +14,7 @@ router.post(
         service: "Gmail",
         host: "fpemzkvpt0@gmail.com",
         user: "fpemzkvpt0",
-        password: "jlrhglgfgteghwla"
+        password
       }
     };
     const from = "STAMP < fpemzkvpt0@gmail.com >";
