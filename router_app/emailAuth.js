@@ -2,7 +2,7 @@ const express = require("express");
 const nodemailer = require("nodemailer");
 const router = express.Router();
 const smtpPool = require("nodemailer-smtp-pool");
-const { User } = require("../model_app/user");
+const { Personal } = require("../model_app/user");
 const wrapper = require("../common_app/wrapper");
 const password = process.env.EMAIL_PW || require("../mailConfig");
 router.post(
@@ -53,7 +53,7 @@ router.post(
         console.log("failed... => ", err);
       } else {
         console.log("succeed... => ", res2);
-        await User.updateOne(
+        await Personal.updateOne(
           { email: inputEmail },
           { $set: { emailAuth: authNo } }
         );
