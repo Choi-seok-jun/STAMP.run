@@ -27,22 +27,22 @@ router.post(
 
     const saltRound = 10;
     const hashedPW = await bcrypt.hash(password, saltRound);
-    const user = new User({
+    const personal = new Personal({
       name,
       email,
       phone_num
     });
-    const saveResult = await user.save();
-    const personal = new Personal({
+    const saveResult = await personal.save();
+    const user = new User({
       password: hashedPW,
       id,
-      userAdd: user._id
+      persAdd: personal._id
     });
-    const saveResult2 = await personal.save();
+    const saveResult2 = await user.save();
 
-    await User.updateOne(
-      { _id: personal.userAdd },
-      { $set: { persAdd: personal._id } }
+    await Personal.updateOne(
+      { _id: personal._id },
+      { $set: { userAdd: user._id } }
       //User를 만들고 난뒤에 업데이트를 하는데  personal 이 만들어질떄 user에있는_id가  userAdd 로 들어가는데
       //그이후에 personal 에 있는 userAdd와 User 에 있는 원본이랑 비교해서 같으면
       //personal이 만들어질때 생긴 _id가 userAdd로 들어간다.
@@ -92,8 +92,21 @@ router.get(
   wrapper(async (req, res, next) => {
     const id = req.query.id;
     console.log(id);
-    const personal = await Personal.findOne({ id });
-    if (personal) {
+    const rs = await User.findOne({ id });
+    if (rs) {
+      res.json({ result: false }); //중복
+    } else {
+      res.json({ result: true });
+    }
+    next();
+  })
+);
+router.get(
+  "/phone_num",
+  wrapper(async (req, res, next) => {
+    const phone_num = req.query.phone_num;
+    const rs = await Personal.findOne({ phone_num });
+    if (rs) {
       res.json({ result: false });
     } else {
       res.json({ result: true });
@@ -102,24 +115,11 @@ router.get(
   })
 );
 router.get(
-  "/:phone_num",
+  "/email",
   wrapper(async (req, res, next) => {
-    const phone_num = req.params.phone_num;
-    const user = await User.findOne({ phone_num });
-    if (user) {
-      res.json({ result: false });
-    } else {
-      res.json({ result: true });
-    }
-    next();
-  })
-);
-router.get(
-  "/:email",
-  wrapper(async (req, res, next) => {
-    const email = req.params.email;
-    const user = await User.findOne({ email });
-    if (user) {
+    const email = req.query.email;
+    const rs = await Personal.findOne({ email });
+    if (rs) {
       res.json({ result: false });
     } else {
       res.json({ result: true });
