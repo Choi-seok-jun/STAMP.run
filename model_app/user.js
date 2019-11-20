@@ -7,7 +7,8 @@ const userSchema = new Schema({
   email: { type: String, unique: true },
   phone_num: { type: String, unique: true },
   admin: { type: Boolean, default: false },
-  persAdd: { type: mongoose.Types.ObjectId, ref: "Personal" }
+  persAdd: { type: mongoose.Types.ObjectId, ref: "Personal" },
+  emailAuth: { type: String, default: "" }
 });
 const personalSchema = new Schema({
   id: { type: String, unique: true },
@@ -23,7 +24,8 @@ function validateUser(user) {
     name: Joi.string(),
     email: Joi.string().email(),
     phone_num: Joi.string(),
-    persAdd: Joi.array().items(Joi.string())
+    persAdd: Joi.array().items(Joi.string()),
+    emailAuth: Joi.string()
   });
   return schema.validate(user);
 }

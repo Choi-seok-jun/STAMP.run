@@ -8,6 +8,7 @@ const modify = require("./router_app/modify");
 const missions = require("./router_app/missions");
 const config = require("./common_app/jwt_config");
 const auth = require("./common_app/auth")();
+const emailAuth = require("./router_app/emailAuth");
 
 const dbURI = process.env.MONGODB_URI || " mongodb://localhost/stamp-run";
 
@@ -29,6 +30,8 @@ app.use("/auth", user);
 app.use("/api/main", main);
 app.use("/api/missions", missions);
 app.use("/api/modify", modify);
+app.use("/api/emailAuth", emailAuth);
+
 app.use(() => mongoose.disconnect());
 
 const PORT = process.env.PORT || 3000;

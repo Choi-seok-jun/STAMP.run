@@ -2,11 +2,12 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const router = express.Router();
-const nodemailer = require("nodemailer");
 const { User, validateUser } = require("../model_app/user");
 const { Personal, validatePersonal } = require("../model_app/user");
 const { jwtSecret } = require("../common_app/jwt_config");
 const wrapper = require("../common_app/wrapper");
+const eamilAuth = require("./emailAuth");
+
 // 객체로 보내주는것은 객체로 받아야함 객체를 req.body에 담았어도 따로따로 받으려면 객체로 받아서 객체 담겨진것을 불러와야함.
 router.post(
   "/join",
@@ -24,9 +25,14 @@ router.post(
       next();
       return;
     }
+
     const saltRound = 10;
     const hashedPW = await bcrypt.hash(password, saltRound);
-    const user = new User({ name, email, phone_num });
+    const user = new User({
+      name,
+      email,
+      phone_num
+    });
     const saveResult = await user.save();
     const personal = new Personal({
       password: hashedPW,
@@ -85,7 +91,7 @@ router.post(
 router.get(
   "/id",
   wrapper(async (req, res, next) => {
-    const id = req.query.id;
+    const id = req.body.id;
     const personal = await Personal.findOne({ id });
     if (personal) {
       res.json({ result: false });
