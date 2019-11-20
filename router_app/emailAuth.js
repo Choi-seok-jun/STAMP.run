@@ -20,8 +20,11 @@ router.post(
     const from = "STAMP < fpemzkvpt0@gmail.com >";
     const to = inputEmail;
     const subject = "STMAP 인증번호 안내입니다.";
-    const authNo = Math.floor(Math.random() * 10000);
+    const authNo = Math.floor(Math.random() * 10 ** 15)
+      .toString()
+      .slice(0, 4);
     const html = `<p>인증번호입니다</p> \n <p>인증번호는 ${authNo}</p>`;
+    console.log(authNo);
 
     const mailOptions = {
       from,
@@ -46,7 +49,6 @@ router.post(
         maxMessages: 10
       })
     );
-
     // 메일을 전송하는 부분
     transporter.sendMail(mailOptions, async (err, res2) => {
       if (err) {
@@ -63,6 +65,33 @@ router.post(
 
       transporter.close();
     });
+  })
+);
+
+router.post(
+  "/emailCheck",
+  wrapper(async (req, res, next) => {
+    const { email, inputAuthNo } = req.body;
+    const rs = await Personal.findOne(
+      {
+        email: email
+      },
+      { emailAuth: 1 }
+    );
+    if (rs.emailAuth === inputAuthNo) {
+      const rs2 = await Personal.updateOne(
+        { email },
+        { $set: { emailCheck: true } }
+      );
+      if (rs2) {
+        res.json({ result: true });
+      } else {
+        res.json({ result: false });
+      }
+    } else {
+      res.json({ result: false });
+    }
+    next();
   })
 );
 
