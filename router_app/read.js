@@ -10,14 +10,11 @@ router.post(
     const inputEmail = req.body.email;
     const inputId = req.body.id;
 
-    const userRead = await User.find(
+    const personalRead = await Personal.find(
       { email: inputEmail },
       { _id: 0, email: 1, phone_num: 1, name: 1 }
     );
-    const personalRead = await Personal.find(
-      { id: inputId },
-      { _id: 0, password: 1 }
-    );
+    const userRead = await User.find({ id: inputId }, { _id: 0, password: 1 });
     console.log(userRead);
     console.log(personalRead);
     res.json({ result: true });
