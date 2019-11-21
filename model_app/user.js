@@ -20,7 +20,7 @@ const userSchema = new Schema({
 const Personal = model("Personal", personalSchema);
 const User = model("User", userSchema);
 
-function validateUser(personal) {
+function validatePersonal(personal) {
   const schema = Joi.object({
     name: Joi.string(),
     email: Joi.string().email(),
@@ -31,7 +31,7 @@ function validateUser(personal) {
   });
   return schema.validate(personal);
 }
-function validatePersonal(user) {
+function validateUser(user) {
   const schema = Joi.object({
     id: Joi.string(),
     password: Joi.string(),
