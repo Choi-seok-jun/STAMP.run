@@ -12,7 +12,7 @@ router.post(
     const inputPasword = req.body.password;
     const saltRound = 10;
     const hashedPW = await bcrypt.hash(inputPasword, saltRound);
-    const passwordChange = await Personal.updateOne(
+    const passwordChange = await User.updateOne(
       { id: inputId },
       { $set: { password: hashedPW } }
     );
@@ -25,7 +25,7 @@ router.post(
   wrapper(async (req, res, next) => {
     const inputEmail = req.body.email;
     const inputphone_num = req.body.phone_num;
-    const phone_numChange = await User.updateOne(
+    const phone_numChange = await Personal.updateOne(
       { email: inputEmail },
       { $set: { phone_num: inputphone_num } }
     );

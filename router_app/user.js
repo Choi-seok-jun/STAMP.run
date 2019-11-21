@@ -12,13 +12,13 @@ router.post(
   "/join",
   wrapper(async (req, res, next) => {
     const { name, email, password, id, phone_num } = req.body;
-    if (validateUser({ name, email, phone_num }).error) {
+    if (validatePersonal({ name, email, phone_num }).error) {
       //검증과정 통과 못하면
       res.status(400).json({ result: false });
       next();
       return;
     }
-    if (validatePersonal({ password, id }).error) {
+    if (validateUser({ password, id }).error) {
       //검증과정 통과 못하면
       res.status(400).json({ result: false });
       next();
@@ -57,29 +57,25 @@ router.post(
   "/login",
   wrapper(async (req, res, next) => {
     const { id, password } = req.body;
-    const personal = await Personal.findOne({ id: id });
+    const user = await User.findOne({ id: id });
     //뒤의 이메일은 사용자가 입력한것 앞의 것은 데이터베이스에 들어있는 값
-    if (!personal) {
+    if (!user) {
       res.json({ msg: "아이디가 없습니다", result: false });
       next();
       return;
     }
-    const result = await bcrypt.compare(password, personal.password);
+    const result = await bcrypt.compare(password, user.password);
     //처음껀 입력한 비밀번호 , 2번째껀 DB에 들어있는 해쉬된 비밀번호 맞는것을 bcrypt가 비교해줌
     if (result) {
       //비밀번호가 맞는경우 토큰을 만들어줌!
       const token = jwt.sign(
         {
-          id: personal._id,
-          name: personal.name,
-          email: personal.email,
-          phone_num: personal.phone_num,
-          admin: personal.admin
+          id: user._id
         },
         jwtSecret,
         { expiresIn: "5m" }
       );
-      res.json({ result: true, token, admin: personal.admin });
+      res.json({ result: true, token });
       next();
     } else {
       res.json({ msg: "비밀번호가 맞지않습니다.", result: false });
