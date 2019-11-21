@@ -60,7 +60,7 @@ router.post(
     const personal = await Personal.findOne({ id: id });
     //뒤의 이메일은 사용자가 입력한것 앞의 것은 데이터베이스에 들어있는 값
     if (!personal) {
-      res.json({ result: false });
+      res.json({ msg: "아이디가 없습니다", result: false });
       next();
       return;
     }
@@ -82,7 +82,7 @@ router.post(
       res.json({ result: true, token, admin: personal.admin });
       next();
     } else {
-      res.json({ result: false });
+      res.json({ msg: "비밀번호가 맞지않습니다.", result: false });
       next();
     }
   })

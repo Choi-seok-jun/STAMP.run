@@ -10,6 +10,7 @@ const missions = require("./router_app/missions");
 const config = require("./common_app/jwt_config");
 const auth = require("./common_app/auth")();
 const emailAuth = require("./router_app/emailAuth");
+const withdraw = require("./router_app/withdraw");
 
 const dbURI = process.env.MONGODB_URI || " mongodb://localhost/stamp-run";
 
@@ -33,6 +34,7 @@ app.use("/api/missions", missions);
 app.use("/auth/read", read);
 app.use("/auth/modify", modify);
 app.use("/auth/emailAuth", emailAuth);
+app.use("/auth/withdraw", withdraw);
 
 app.use(() => mongoose.disconnect());
 

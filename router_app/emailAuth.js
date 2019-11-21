@@ -59,12 +59,69 @@ router.post(
           { email: inputEmail },
           { $set: { emailAuth: authNo } }
         );
+        setTimeout(() => {
+          User.updateOne({ email: inputEmail }, { $set: { emailAuth: "" } });
+        }, 300000);
+
         res.json({ result: true });
         next();
       }
 
       transporter.close();
     });
+  })
+);
+router.post(
+  "/emailCheck",
+  wrapper(async (req, res, next) => {
+    const { email, inputAuthNo } = req.body;
+    const rs = await Personal.findOne(
+      {
+        email: email
+      },
+      { emailAuth: 1 }
+    );
+    if (rs.emailAuth === inputAuthNo) {
+      const rs2 = await Personal.updateOne(
+        { email },
+        { $set: { emailCheck: true } }
+      );
+      if (rs2) {
+        res.json({ result: true });
+      } else {
+        res.json({ result: false });
+      }
+    } else {
+      res.json({ result: false });
+    }
+    next();
+  })
+);
+
+router.post(
+  "/emailCheck",
+  wrapper(async (req, res, next) => {
+    const { email, inputAuthNo } = req.body;
+    const rs = await Personal.findOne(
+      {
+        email: email
+      },
+      { emailAuth: 1 }
+    );
+    if (rs.emailAuth === inputAuthNo) {
+      const rs2 = await Personal.updateOne(
+        { email },
+        { $set: { emailCheck: true } }
+      );
+      if (rs2) {
+        res.json({ result: true });
+      } else {
+        res.json({ result: false });
+      }
+    } else {
+      res.json({ result: false });
+    }
+    next();
   })
 );
 
