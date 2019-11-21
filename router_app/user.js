@@ -102,7 +102,7 @@ router.get(
   })
 );
 router.get(
-  "/:phone_num",
+  "/phone_num",
   wrapper(async (req, res, next) => {
     const phone_num = req.params.phone_num;
     const user = await User.findOne({ phone_num });
@@ -115,7 +115,7 @@ router.get(
   })
 );
 router.get(
-  "/:email",
+  "/email",
   wrapper(async (req, res, next) => {
     const email = req.params.email;
     const user = await User.findOne({ email });
