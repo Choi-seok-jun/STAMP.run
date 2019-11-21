@@ -12,12 +12,12 @@ router.post(
     const config = {
       mailer: {
         service: "Gmail",
-        host: "fpemzkvpt0@gmail.com",
-        user: "fpemzkvpt0",
+        host: "STAMP.owner@gmail.com",
+        user: "STAMP.owner",
         password
       }
     };
-    const from = "STAMP < fpemzkvpt0@gmail.com >";
+    const from = "STAMP < STAMP.owner@gmail.com >";
     const to = inputEmail;
     const subject = "STMAP 인증번호 안내입니다.";
     const authNo = Math.floor(Math.random() * 10 ** 15)
@@ -59,12 +59,42 @@ router.post(
           { email: inputEmail },
           { $set: { emailAuth: authNo } }
         );
+        setTimeout(() => {
+          User.updateOne({ email: inputEmail }, { $set: { emailAuth: "" } });
+        }, 30000);
+
         res.json({ result: true });
         next();
       }
 
       transporter.close();
     });
+  })
+);
+router.post(
+  "/emailCheck",
+  wrapper(async (req, res, next) => {
+    const { email, inputAuthNo } = req.body;
+    const rs = await Personal.findOne(
+      {
+        email: email
+      },
+      { emailAuth: 1 }
+    );
+    if (rs.emailAuth === inputAuthNo) {
+      const rs2 = await Personal.updateOne(
+        { email },
+        { $set: { emailCheck: true } }
+      );
+      if (rs2) {
+        res.json({ result: true });
+      } else {
+        res.json({ result: false });
+      }
+    } else {
+      res.json({ result: false });
+    }
+    next();
   })
 );
 
