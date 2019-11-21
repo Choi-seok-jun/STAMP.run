@@ -61,7 +61,7 @@ router.post(
         );
         setTimeout(() => {
           User.updateOne({ email: inputEmail }, { $set: { emailAuth: "" } });
-        }, 30000);
+        }, 300000);
 
         res.json({ result: true });
         next();
