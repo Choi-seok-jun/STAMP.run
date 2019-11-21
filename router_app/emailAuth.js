@@ -12,12 +12,12 @@ router.post(
     const config = {
       mailer: {
         service: "Gmail",
-        host: "fpemzkvpt0@gmail.com",
-        user: "fpemzkvpt0",
+        host: "STAMP.owner@gmail.com",
+        user: "STAMP.owner",
         password
       }
     };
-    const from = "STAMP < fpemzkvpt0@gmail.com >";
+    const from = "STAMP < STAMP.owner@gmail.com >";
     const to = inputEmail;
     const subject = "STMAP 인증번호 안내입니다.";
     const authNo = Math.floor(Math.random() * 10 ** 15)
