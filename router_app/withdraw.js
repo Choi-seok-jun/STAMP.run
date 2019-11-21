@@ -9,8 +9,8 @@ router.post(
   wrapper(async (req, res, next) => {
     const inputId = req.body.id;
     const inputEmail = req.body.email;
-    const withdrawalPersonal = await Personal.deleteOne({ id: inputId });
-    const withdrawalUser = await User.deleteOne({ email: inputEmail });
+    const withdrawalPersonal = await User.deleteOne({ id: inputId });
+    const withdrawalUser = await Personal.deleteOne({ email: inputEmail });
     res.json({ result: true });
     next();
   })
