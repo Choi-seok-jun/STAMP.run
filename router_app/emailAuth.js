@@ -5,6 +5,9 @@ const smtpPool = require("nodemailer-smtp-pool");
 const { Personal } = require("../model_app/user");
 const wrapper = require("../common_app/wrapper");
 const password = process.env.EMAIL_PW || require("../mailConfig");
+
+const { emailContents } = require("../model_app/emailHtml");
+
 router.post(
   "/",
   wrapper(async (req, res, next) => {
@@ -23,7 +26,7 @@ router.post(
     const authNo = Math.floor(Math.random() * 10 ** 15)
       .toString()
       .slice(0, 4);
-    const html = `<p>인증번호입니다</p> \n <p>인증번호는 ${authNo}</p>`;
+    const html = emailContents(authNo);
     console.log(authNo);
 
     const mailOptions = {

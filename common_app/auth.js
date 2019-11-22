@@ -1,6 +1,6 @@
 const passport = require("passport");
 const passportJWT = require("passport-jwt");
-const { User } = require("../model_app/user");
+const { User, Personal } = require("../model_app/user");
 const config = require("./jwt_config");
 
 const { ExtractJwt, Strategy } = passportJWT;
@@ -11,13 +11,20 @@ const options = {
 
 module.exports = () => {
   const strategy = new Strategy(options, async (payload, done) => {
-    const user = await User.findById(payload.id);
-    if (user) {
+    const user = await User.findById(payload.userAdd);
+    const person = await Personal.findOne({ userAdd: payload.userAdd });
+    if (person) {
       return done(null, {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        phone_num: user.phone_num
+        persAdd: person._id,
+        admin: person.admin,
+        name: person.name,
+        email: person.email,
+        emailCheck: person.emailCheck,
+        phone_num: person.phone_num,
+
+        useradd: user._id,
+        id: user.id,
+        password: user.password,
       });
     } else {
       return done(new Error("user not find"), null);
