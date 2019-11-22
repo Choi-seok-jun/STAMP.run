@@ -21,6 +21,7 @@ module.exports = () => {
         email: person.email,
         emailCheck: person.emailCheck,
         phone_num: person.phone_num,
+
         useradd: user._id,
         id: user.id,
         password: user.password,

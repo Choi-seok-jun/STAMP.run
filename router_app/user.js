@@ -47,10 +47,11 @@ router.post("/join", wrapper(async (req, res, next) => {
 // post : 로그인
 router.post("/login", wrapper(async (req, res, next) => {
   // 사용자 입력값
-  const { id, password } = req.body;
+  const { id: user_input_id, password } = req.body;
+  // const user_input_id =req.body.id;
 
   // DB 조회
-  const user = await User.findOne({ id: id });
+  const user = await User.findOne({ id: user_input_id });
 
   // DB 조회 결과가 없으면, 더 진행하지 않고 next()호출 후, return으로 이 router를 벗어남.
   if (!user) {

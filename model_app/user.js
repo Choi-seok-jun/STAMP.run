@@ -27,14 +27,13 @@ function validatePersonal(personal) {
     name: Joi.string(),
     email: Joi.string().email(),
     phone_num: Joi.string(),
-    admin:Joi.boolean(),
+    admin: Joi.boolean(),
     userAdd: Joi.string(),
     emailAuth: Joi.string(),
     emailCheck: Joi.string()
   });
   return schema.validate(personal);
 }
-
 
 const userSchema = new Schema({
   id: { type: String, unique: true },
@@ -48,11 +47,10 @@ function validateUser(user) {
   const schema = Joi.object({
     id: Joi.string(),
     password: Joi.string(),
-    persAdd: Joi.string(),
+    persAdd: Joi.string()
   });
   return schema.validate(user);
 }
-
 
 module.exports = {
   User,
